@@ -1,232 +1,283 @@
-#!/usr/bin/env -S uv run --script
+#!/usr/bin/env python3
+"""
+Single-GPU baseline training script.
+Covers: Task 1 (fp32, bf16, bf16 + activation checkpointing)
+
+Usage:
+    CUDA_VISIBLE_DEVICES=0 python scripts/train_single.py \
+        --dtype bf16 \
+        --experiment-name p1-bf16 \
+        --log-dir logs/
+
+    CUDA_VISIBLE_DEVICES=0 python scripts/train_single.py \
+        --dtype fp32 \
+        --experiment-name p1-fp32 \
+        --log-dir logs/
+
+    CUDA_VISIBLE_DEVICES=0 python scripts/train_single.py \
+        --dtype bf16 --activation-checkpointing \
+        --experiment-name p1-bf16-ac \
+        --log-dir logs/
+"""
 
 import argparse
 import json
 import logging
 import math
 import os
+import time
 from pathlib import Path
-from typing import Any
 
 import torch
-import tqdm
+from datasets import load_dataset
 from torch.utils.data import DataLoader
-from transformers import (
-    AutoConfig,
-    AutoModelForCausalLM,
-    default_data_collator,
-)
+from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, default_data_collator
 
-from common import LocalTimer, get_mem_stats, load_and_preprocess_data
+# ── Constants ─────────────────────────────────────────────────────────────────
 
-LOGGER = logging.getLogger(__name__)
+MODEL_NAME = 'EleutherAI/pythia-160m'
+DATASET_NAME = 'wikitext'
+DATASET_CONFIG = 'wikitext-103-v1'
+
+SEED = 42
+SEQ_LEN = 512
+GLOBAL_BATCH_TOKENS = 131_072   # fixed token budget per step
+LR = 1e-4
+WEIGHT_DECAY = 0.01
+GRAD_CLIP = 1.0
+LOG_INTERVAL = 10
+EVAL_INTERVAL = 200
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def setup_logging(exp_dir: Path, rank: int = 0) -> logging.Logger:
+    log_file = exp_dir / 'train.log'
+    fmt = '[%(asctime)s] %(levelname)s: %(message)s'
+    handlers = [logging.StreamHandler()]
+    if rank == 0:
+        handlers.append(logging.FileHandler(log_file))
+    logging.basicConfig(format=fmt, level=logging.INFO, handlers=handlers, force=True)
+    return logging.getLogger(__name__)
 
 
-def get_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--experiment-name', default=None)
-    parser.add_argument('-d', '--dataset-name', default=None, required=True)
-    parser.add_argument('--dataset-subset', default=None)
-    parser.add_argument('-m', '--model-name', default=None, required=True)
-    parser.add_argument('--save-dir', default='outputs')
-    parser.add_argument('--seed', default=42, type=int)
-    parser.add_argument('--num-epochs', default=100, type=int)
-    parser.add_argument('--lr', default=3e-5, type=float)
-    parser.add_argument('-b', '--batch-size', default=1, type=int)
-    parser.add_argument('--log-freq', default=10, type=int)
-    parser.add_argument('--ckpt-freq', default=500, type=int)
-    parser.add_argument('-s', '--seq-length', default=1024, type=int)
-    return parser
+def tokenize_dataset(dataset, tokenizer, seq_len: int):
+    """Tokenize and chunk the dataset into fixed-length sequences."""
+    def tokenize_fn(examples):
+        return tokenizer(examples['text'], truncation=False, padding=False)
 
-
-def main(args: argparse.Namespace) -> None:  # noqa: C901, PLR0915, PLR0912
-    logging.basicConfig(
-        format='[%(asctime)s] %(levelname)s:%(message)s',
-        level=logging.INFO,
+    tokenized = dataset.map(
+        tokenize_fn,
+        batched=True,
+        remove_columns=dataset.column_names,
+        desc='Tokenizing',
     )
 
-    LOGGER.debug(os.environ)
-    LOGGER.debug(args)
+    # Concatenate and chunk into seq_len blocks
+    def chunk_fn(examples):
+        concat = {k: sum(examples[k], []) for k in examples}
+        total = len(concat['input_ids'])
+        # drop last incomplete chunk
+        total = (total // seq_len) * seq_len
+        result = {k: [v[i:i + seq_len] for i in range(0, total, seq_len)] for k, v in concat.items()}
+        result['labels'] = result['input_ids'].copy()
+        return result
 
-    device = torch.device('cuda')
-    dtype = torch.bfloat16
+    chunked = tokenized.map(chunk_fn, batched=True, desc='Chunking')
+    chunked.set_format(type='torch')
+    return chunked
 
-    torch.manual_seed(args.seed)
 
-    # Initializing an **untrained** model
-    model: torch.nn.Module
+def load_data(tokenizer, seq_len: int):
+    raw = load_dataset(DATASET_NAME, DATASET_CONFIG)
+    train_ds = tokenize_dataset(raw['train'], tokenizer, seq_len)
+    val_ds = tokenize_dataset(raw['validation'], tokenizer, seq_len)
+    return train_ds, val_ds
+
+
+def compute_grad_accum(seq_len: int, local_bs: int, dp_size: int = 1) -> int:
+    """Compute gradient accumulation steps to hit GLOBAL_BATCH_TOKENS."""
+    return GLOBAL_BATCH_TOKENS // (seq_len * local_bs * dp_size)
+
+
+@torch.no_grad()
+def evaluate(model, val_loader, device, max_batches: int = 50) -> float:
+    model.eval()
+    total_loss = 0.0
+    count = 0
+    for i, batch in enumerate(val_loader):
+        if i >= max_batches:
+            break
+        batch = {k: v.to(device) for k, v in batch.items()}
+        out = model(**batch)
+        total_loss += out.loss.item()
+        count += 1
+    model.train()
+    avg_loss = total_loss / max(count, 1)
+    return math.exp(avg_loss)   # perplexity
+
+
+def gb(bytes_val: int) -> float:
+    return bytes_val / (1024 ** 3)
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+def parse_args():
+    p = argparse.ArgumentParser(description='Single-GPU baseline training')
+    p.add_argument('--model', default=MODEL_NAME)
+    p.add_argument('--dtype', choices=['fp32', 'bf16'], default='bf16')
+    p.add_argument('--activation-checkpointing', action='store_true')
+    p.add_argument('--batch-size', type=int, default=8,
+                   help='Local batch size (sequences per GPU)')
+    p.add_argument('--num-epochs', type=int, default=1)
+    p.add_argument('--experiment-name', required=True)
+    p.add_argument('--log-dir', default='logs/')
+    p.add_argument('--no-eval', action='store_true')
+    return p.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    torch.manual_seed(SEED)
+
+    # Directories
+    exp_dir = Path(args.log_dir) / args.experiment_name
+    exp_dir.mkdir(parents=True, exist_ok=True)
+
+    logger = setup_logging(exp_dir)
+    logger.info(f'Experiment: {args.experiment_name}')
+    logger.info(f'dtype={args.dtype}  activation_checkpointing={args.activation_checkpointing}')
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    dtype = torch.bfloat16 if args.dtype == 'bf16' else torch.float32
+
+    # ── Model & tokenizer ──────────────────────────────────────────────────
+    logger.info(f'Loading model {args.model}')
+    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
+    config = AutoConfig.from_pretrained(args.model, use_cache=False)
     with device:
-        config = AutoConfig.from_pretrained(args.model_name, use_cache=False)
-        model = AutoModelForCausalLM.from_config(config, dtype=dtype)
-    LOGGER.info(f'Training {sum(p.numel() for p in model.parameters())} model parameters')
+        model = AutoModelForCausalLM.from_config(config, torch_dtype=dtype)
 
-    model = torch.compile(model)  # type: ignore[assignment]
+    if args.activation_checkpointing:
+        model.gradient_checkpointing_enable()
+        logger.info('Activation checkpointing enabled')
 
-    LOGGER.info(f'Initialized model uses {get_mem_stats(device)["curr_alloc_gb"]}gb')
+    logger.info(f'Parameters: {sum(p.numel() for p in model.parameters()) / 1e6:.1f}M')
 
-    data = load_and_preprocess_data(
-        args.model_name,
-        args.seq_length,
-        args.dataset_name,
-        args.dataset_subset,
-        config,
-    )
-    data = data.train_test_split(test_size=0.05, seed=args.seed)
-    train_data = data['train']
-    eval_data = data['test']
-    LOGGER.debug(f'{len(train_data)} training samples. {eval_data} eval samples')
+    # ── Data ──────────────────────────────────────────────────────────────
+    logger.info('Loading dataset...')
+    train_ds, val_ds = load_data(tokenizer, SEQ_LEN)
 
-    dataloader = DataLoader(
-        train_data,
-        batch_size=args.batch_size,
-        shuffle=True,
-        drop_last=True,
-        num_workers=1,
-        prefetch_factor=2,
-        collate_fn=default_data_collator,
-    )
-    eval_dataloader = DataLoader(
-        eval_data,
-        batch_size=args.batch_size,
-        drop_last=True,
-        num_workers=1,
-        prefetch_factor=2,
-        collate_fn=default_data_collator,
-    )
-    LOGGER.info(f'{len(dataloader)} train batches per epoch, {len(eval_dataloader)} eval batches per epoch')
+    grad_accum = compute_grad_accum(SEQ_LEN, args.batch_size)
+    logger.info(f'batch_size={args.batch_size}  grad_accum={grad_accum}  '
+                f'=> {SEQ_LEN * args.batch_size * grad_accum} tokens/step')
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True,
+                              drop_last=True, num_workers=4, pin_memory=True)
+    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False,
+                            drop_last=False, num_workers=4, pin_memory=True)
 
-    # NOTE: T_max and eta_min were arbitrarily chosen
-    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=1000, eta_min=args.lr * 1e-2)
+    # ── Optimizer ─────────────────────────────────────────────────────────
+    optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
 
-    is_experiment = False
-    exp_dir: Path = Path(args.save_dir)
-    if args.experiment_name is not None:
-        is_experiment = True
-        exp_dir = exp_dir / args.experiment_name
+    # ── Training ──────────────────────────────────────────────────────────
+    torch.cuda.reset_peak_memory_stats(device)
+    model.train()
 
-    # attempt resume
-    state = {
-        'epoch': 0,
-        'global_step': 0,
-        'epoch_step': 0,
-        'running_loss': 0,
-    }
-    if is_experiment and (exp_dir / 'state.json').exists():
-        # NOTE: weights_only is to protect against arbitrary code execution with pickle decoding.
-        def _load_to_device(p: str | Path) -> dict[str, Any]:
-            return torch.load(p, map_location=device, weights_only=True)
+    global_step = 0
+    tokens_seen = 0
+    train_start = time.time()
+    step_start = time.time()
+    log_rows = []
 
-        model.load_state_dict(_load_to_device(exp_dir / 'model.pt'))
-        optimizer.load_state_dict(_load_to_device(exp_dir / 'optimizer.pt'))
-        lr_scheduler.load_state_dict(_load_to_device(exp_dir / 'lr_scheduler.pt'))
-        with (exp_dir / 'state.json').open() as f:
-            state = json.load(f)
+    for epoch in range(args.num_epochs):
+        logger.info(f'=== Epoch {epoch + 1}/{args.num_epochs} ===')
 
-        LOGGER.info(f'Resumed! State: {state}')
-    elif is_experiment:
-        LOGGER.info('Creating experiment root directory')
-        exp_dir.mkdir(parents=True, exist_ok=True)
+        accum_loss = 0.0
+        optimizer.zero_grad()
 
-    # will use this to understand breakdown of speed
-    timers = {k: LocalTimer(device) for k in ['data', 'forward', 'backward', 'update']}
+        for batch_idx, batch in enumerate(train_loader):
+            batch = {k: v.to(device) for k, v in batch.items()}
+            is_last_accum = (batch_idx + 1) % grad_accum == 0
 
-    for state['epoch'] in range(state['epoch'], args.num_epochs):  # noqa: B020
-        LOGGER.info(f'Begin epoch {state["epoch"]} at step {state["epoch_step"]}')
-        model.train()
+            out = model(**batch)
+            loss = out.loss / grad_accum
+            loss.backward()
+            accum_loss += loss.item()
 
-        progress_bar = tqdm.tqdm(range(len(dataloader)))
-        if state['epoch_step'] > 0:
-            progress_bar.update(state['epoch_step'])
+            tokens_seen += batch['input_ids'].numel()
 
-        # NOTE: This is not standard. Normally you can just iterate directly over dataloader.
-        #       We are doing this so we can explicitly measure the time it takes to generate a batch.
-        batches = iter(dataloader)
-
-        for i_step in range(len(dataloader)):
-            # measure the time it takes to generate a batch and move it to the GPU
-            with timers['data'], torch.no_grad():
-                batch = next(batches)
-                batch = {k: v.to(device=device) for k, v in batch.items()}
-
-            # For resuming, this has to come after getting the next batch, so we move through the dataset properly
-            if i_step < state['epoch_step']:
-                continue
-
-            with timers['forward']:
-                outputs = model(**batch)
-                del batch
-
-            with timers['backward']:
-                outputs.loss.backward()
-
-            with timers['update']:
+            if is_last_accum:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
                 optimizer.step()
-                lr_scheduler.step()
-                # NOTE: set_to_none=True will de-allocate the gradients, saving us some memory
-                optimizer.zero_grad(set_to_none=True)
+                optimizer.zero_grad()
 
-            state['global_step'] += 1
-            state['epoch_step'] += 1
-            state['running_loss'] += outputs.loss.item()
-            progress_bar.update(1)
+                global_step += 1
+                elapsed = time.time() - step_start
+                step_tokens = SEQ_LEN * args.batch_size * grad_accum
+                tps = step_tokens / elapsed
+                peak_mem = gb(torch.cuda.max_memory_allocated(device))
 
-            if state['global_step'] % args.log_freq == 0:
-                tok_per_step = args.batch_size * args.seq_length
-                ms_per_step = sum(t.avg_elapsed_ms() for t in timers.values())
-                info = {
-                    'global_step': state['global_step'],
-                    'lr': lr_scheduler.get_last_lr()[0],
-                    'running_loss': state['running_loss'] / args.log_freq,
-                    'epoch': state['epoch'],
-                    'epoch_progress': state['epoch_step'] / len(dataloader),
-                    'num_batches_remaining': len(dataloader) - i_step,
-                    **get_mem_stats(device),
-                    'tokens_per_s': 1000 * tok_per_step / ms_per_step,
-                    'time/total': ms_per_step,
-                    **{f'time/{k}': timer.avg_elapsed_ms() for k, timer in timers.items()},
-                }
+                if global_step % LOG_INTERVAL == 0:
+                    logger.info(
+                        f'step={global_step:5d}  loss={accum_loss:.4f}  '
+                        f'tps={tps:.0f}  peak_mem={peak_mem:.3f}GB'
+                    )
 
-                LOGGER.info(info)
+                log_rows.append({
+                    'step': global_step,
+                    'train_loss': accum_loss,
+                    'tps': tps,
+                    'peak_mem_gb': peak_mem,
+                })
 
-                torch.cuda.reset_peak_memory_stats(device)
-                state['running_loss'] = 0
-                for t in timers.values():
-                    t.reset()
+                accum_loss = 0.0
+                step_start = time.time()
 
-            if is_experiment and state['global_step'] % args.ckpt_freq == 0:
-                LOGGER.info('Saving checkpoint.')
-                torch.save(optimizer.state_dict(), exp_dir / 'optimizer.pt')
-                torch.save(model.state_dict(), exp_dir / 'model.pt')
-                torch.save(lr_scheduler.state_dict(), exp_dir / 'lr_scheduler.pt')
-                with (exp_dir / 'state.json').open('w') as fp:
-                    json.dump(state, fp)
+                # Validation
+                if not args.no_eval and global_step % EVAL_INTERVAL == 0:
+                    val_ppl = evaluate(model, val_loader, device)
+                    logger.info(f'  >>> val_ppl={val_ppl:.2f}')
+                    log_rows[-1]['val_ppl'] = val_ppl
 
-        model.eval()
-        losses = []
-        for _, batch in enumerate(eval_dataloader):
-            for k, v in batch.items():
-                batch[k] = v.to(device=device)
+    # ── Final eval ────────────────────────────────────────────────────────
+    logger.info('Final evaluation...')
+    val_ppl = evaluate(model, val_loader, device)
+    peak_mem = gb(torch.cuda.max_memory_allocated(device))
+    total_time = time.time() - train_start
+    total_tps = tokens_seen / total_time
 
-            with torch.no_grad():
-                outputs = model(**batch)
+    logger.info(f'FINAL: val_ppl={val_ppl:.4f}  peak_mem={peak_mem:.3f}GB  '
+                f'throughput={total_tps:.0f} tok/s  time={total_time:.0f}s')
 
-            losses.append(outputs.loss.item())
-        losses = torch.Tensor(losses)  # type: ignore[assignment]
+    # ── Save results ──────────────────────────────────────────────────────
+    results = {
+        'experiment': args.experiment_name,
+        'dtype': args.dtype,
+        'activation_checkpointing': args.activation_checkpointing,
+        'val_ppl': val_ppl,
+        'peak_mem_gb': peak_mem,
+        'throughput_tps': total_tps,
+        'total_time_s': total_time,
+        'total_steps': global_step,
+        'tokens_seen': tokens_seen,
+    }
+    with open(exp_dir / 'results.json', 'w') as f:
+        json.dump(results, f, indent=2)
 
-        try:
-            eval_loss = torch.mean(losses)  # type: ignore[call-overload]
-            perplexity = math.exp(eval_loss)
-        except OverflowError:
-            perplexity = float('inf')
+    import csv
+    with open(exp_dir / 'training_log.csv', 'w', newline='') as f:
+        if log_rows:
+            writer = csv.DictWriter(f, fieldnames=log_rows[0].keys())
+            writer.writeheader()
+            writer.writerows(log_rows)
 
-        LOGGER.info(f'epoch {state["epoch"]}: perplexity: {perplexity} eval_loss: {eval_loss}')
-
-        state['epoch_step'] = 0
+    logger.info(f'Results saved to {exp_dir}')
 
 
 if __name__ == '__main__':
-    parser = get_parser()
-    args = parser.parse_args()
-    main(args)
+    main()
