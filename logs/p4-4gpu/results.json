@@ -1,0 +1,15 @@
+{
+  "experiment": "p4-4gpu",
+  "model": "EleutherAI/pythia-160m",
+  "strategy": "FULL_SHARD",
+  "dtype": "bf16",
+  "cpu_offload": false,
+  "activation_checkpointing": false,
+  "world_size": 4,
+  "val_ppl": 108.17075592691384,
+  "peak_mem_gpu_gb": 1.5249724388122559,
+  "throughput_tps": 37923.37453956074,
+  "throughput_per_gpu_tps": 9480.843634890185,
+  "total_time_s": 3115.631597518921,
+  "total_steps": 901
+}

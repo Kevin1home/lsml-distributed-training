@@ -1,0 +1,15 @@
+{
+  "experiment": "p3-cpu-offload-ac",
+  "model": "EleutherAI/pythia-160m",
+  "strategy": "FULL_SHARD",
+  "dtype": "bf16",
+  "cpu_offload": true,
+  "activation_checkpointing": true,
+  "world_size": 2,
+  "val_ppl": 123.11512439372359,
+  "peak_mem_gpu_gb": 1.6079072952270508,
+  "throughput_tps": 21146.887533869478,
+  "throughput_per_gpu_tps": 10573.443766934739,
+  "total_time_s": 5587.359549283981,
+  "total_steps": 901
+}

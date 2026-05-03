@@ -1,0 +1,15 @@
+{
+  "experiment": "bonus-410m-no-shard",
+  "model": "EleutherAI/pythia-410m",
+  "strategy": "NO_SHARD",
+  "dtype": "bf16",
+  "cpu_offload": false,
+  "activation_checkpointing": false,
+  "world_size": 4,
+  "val_ppl": 85.949847865466,
+  "peak_mem_gpu_gb": 5.35964822769165,
+  "throughput_tps": 45327.99419140022,
+  "throughput_per_gpu_tps": 11331.998547850055,
+  "total_time_s": 2606.6731190681458,
+  "total_steps": 901
+}

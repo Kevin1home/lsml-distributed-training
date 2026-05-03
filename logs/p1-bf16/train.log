@@ -1,0 +1,104 @@
+[2026-05-01 07:06:20,353] INFO: Experiment: p1-bf16
+[2026-05-01 07:06:20,353] INFO: dtype=bf16  activation_checkpointing=False
+[2026-05-01 07:06:20,575] INFO: Loading model EleutherAI/pythia-160m
+[2026-05-01 07:06:21,984] INFO: Parameters: 162.3M
+[2026-05-01 07:06:21,984] INFO: Loading dataset...
+[2026-05-01 07:06:26,973] INFO: batch_size=8  grad_accum=32  => 131072 tokens/step
+[2026-05-01 07:06:26,975] INFO: === Epoch 1/1 ===
+[2026-05-01 07:06:42,403] INFO: step=   10  loss=8.6499  tps=86957  peak_mem=5.255GB
+[2026-05-01 07:06:57,440] INFO: step=   20  loss=7.8952  tps=87556  peak_mem=5.255GB
+[2026-05-01 07:07:12,461] INFO: step=   30  loss=7.3411  tps=87379  peak_mem=5.255GB
+[2026-05-01 07:07:27,476] INFO: step=   40  loss=6.9500  tps=87287  peak_mem=5.255GB
+[2026-05-01 07:07:42,463] INFO: step=   50  loss=6.7346  tps=87577  peak_mem=5.255GB
+[2026-05-01 07:07:57,453] INFO: step=   60  loss=6.5790  tps=87600  peak_mem=5.255GB
+[2026-05-01 07:08:12,451] INFO: step=   70  loss=6.4756  tps=87412  peak_mem=5.255GB
+[2026-05-01 07:08:27,440] INFO: step=   80  loss=6.3859  tps=87513  peak_mem=5.255GB
+[2026-05-01 07:08:42,415] INFO: step=   90  loss=6.2327  tps=87752  peak_mem=5.255GB
+[2026-05-01 07:08:57,397] INFO: step=  100  loss=6.1757  tps=87582  peak_mem=5.255GB
+[2026-05-01 07:09:12,388] INFO: step=  110  loss=6.1073  tps=87668  peak_mem=5.255GB
+[2026-05-01 07:09:27,339] INFO: step=  120  loss=6.0946  tps=87909  peak_mem=5.255GB
+[2026-05-01 07:09:42,274] INFO: step=  130  loss=5.9950  tps=87892  peak_mem=5.255GB
+[2026-05-01 07:09:57,211] INFO: step=  140  loss=5.9387  tps=87736  peak_mem=5.255GB
+[2026-05-01 07:10:12,174] INFO: step=  150  loss=5.9028  tps=87805  peak_mem=5.255GB
+[2026-05-01 07:10:27,134] INFO: step=  160  loss=5.8840  tps=87165  peak_mem=5.255GB
+[2026-05-01 07:10:42,098] INFO: step=  170  loss=5.7929  tps=87717  peak_mem=5.255GB
+[2026-05-01 07:10:57,046] INFO: step=  180  loss=5.7649  tps=87944  peak_mem=5.255GB
+[2026-05-01 07:11:11,978] INFO: step=  190  loss=5.7384  tps=87952  peak_mem=5.255GB
+[2026-05-01 07:11:26,940] INFO: step=  200  loss=5.7545  tps=87651  peak_mem=5.255GB
+[2026-05-01 07:11:27,601] INFO:   >>> val_ppl=269.82
+[2026-05-01 07:11:42,519] INFO: step=  210  loss=5.6869  tps=87918  peak_mem=5.255GB
+[2026-05-01 07:11:57,487] INFO: step=  220  loss=5.6648  tps=87863  peak_mem=5.255GB
+[2026-05-01 07:12:12,444] INFO: step=  230  loss=5.5841  tps=87819  peak_mem=5.255GB
+[2026-05-01 07:12:27,399] INFO: step=  240  loss=5.6113  tps=87814  peak_mem=5.255GB
+[2026-05-01 07:12:42,363] INFO: step=  250  loss=5.6063  tps=87645  peak_mem=5.255GB
+[2026-05-01 07:12:57,312] INFO: step=  260  loss=5.5460  tps=87607  peak_mem=5.255GB
+[2026-05-01 07:13:12,280] INFO: step=  270  loss=5.4981  tps=87987  peak_mem=5.255GB
+[2026-05-01 07:13:27,235] INFO: step=  280  loss=5.5122  tps=87715  peak_mem=5.255GB
+[2026-05-01 07:13:42,182] INFO: step=  290  loss=5.4644  tps=87821  peak_mem=5.255GB
+[2026-05-01 07:13:57,133] INFO: step=  300  loss=5.4397  tps=87727  peak_mem=5.255GB
+[2026-05-01 07:14:12,083] INFO: step=  310  loss=5.4325  tps=87853  peak_mem=5.255GB
+[2026-05-01 07:14:27,070] INFO: step=  320  loss=5.4222  tps=87394  peak_mem=5.255GB
+[2026-05-01 07:14:42,109] INFO: step=  330  loss=5.3908  tps=87236  peak_mem=5.255GB
+[2026-05-01 07:14:57,108] INFO: step=  340  loss=5.3998  tps=87205  peak_mem=5.255GB
+[2026-05-01 07:15:12,075] INFO: step=  350  loss=5.3633  tps=87431  peak_mem=5.255GB
+[2026-05-01 07:15:27,032] INFO: step=  360  loss=5.3490  tps=87662  peak_mem=5.255GB
+[2026-05-01 07:15:42,012] INFO: step=  370  loss=5.2916  tps=87574  peak_mem=5.255GB
+[2026-05-01 07:15:56,973] INFO: step=  380  loss=5.3264  tps=87622  peak_mem=5.255GB
+[2026-05-01 07:16:11,928] INFO: step=  390  loss=5.3077  tps=87692  peak_mem=5.255GB
+[2026-05-01 07:16:26,890] INFO: step=  400  loss=5.2891  tps=87589  peak_mem=5.255GB
+[2026-05-01 07:16:27,549] INFO:   >>> val_ppl=169.97
+[2026-05-01 07:16:42,466] INFO: step=  410  loss=5.2244  tps=87830  peak_mem=5.255GB
+[2026-05-01 07:16:57,409] INFO: step=  420  loss=5.2685  tps=87882  peak_mem=5.255GB
+[2026-05-01 07:17:12,358] INFO: step=  430  loss=5.2435  tps=87545  peak_mem=5.255GB
+[2026-05-01 07:17:27,315] INFO: step=  440  loss=5.2170  tps=87902  peak_mem=5.255GB
+[2026-05-01 07:17:42,271] INFO: step=  450  loss=5.1592  tps=87783  peak_mem=5.255GB
+[2026-05-01 07:17:57,039] INFO: step=  460  loss=5.2168  tps=87787  peak_mem=5.255GB
+[2026-05-01 07:18:12,009] INFO: step=  470  loss=5.1842  tps=87465  peak_mem=5.255GB
+[2026-05-01 07:18:26,995] INFO: step=  480  loss=5.1557  tps=87469  peak_mem=5.255GB
+[2026-05-01 07:18:41,991] INFO: step=  490  loss=5.1858  tps=87842  peak_mem=5.255GB
+[2026-05-01 07:18:56,997] INFO: step=  500  loss=5.1693  tps=86921  peak_mem=5.255GB
+[2026-05-01 07:19:11,984] INFO: step=  510  loss=5.1049  tps=87784  peak_mem=5.255GB
+[2026-05-01 07:19:26,995] INFO: step=  520  loss=5.0850  tps=87259  peak_mem=5.255GB
+[2026-05-01 07:19:41,984] INFO: step=  530  loss=5.0935  tps=87593  peak_mem=5.255GB
+[2026-05-01 07:19:56,971] INFO: step=  540  loss=5.1024  tps=87105  peak_mem=5.255GB
+[2026-05-01 07:20:11,947] INFO: step=  550  loss=5.0757  tps=87573  peak_mem=5.255GB
+[2026-05-01 07:20:26,934] INFO: step=  560  loss=5.0720  tps=87511  peak_mem=5.255GB
+[2026-05-01 07:20:41,917] INFO: step=  570  loss=5.1127  tps=87733  peak_mem=5.255GB
+[2026-05-01 07:20:56,904] INFO: step=  580  loss=5.0649  tps=87606  peak_mem=5.255GB
+[2026-05-01 07:21:11,892] INFO: step=  590  loss=5.0409  tps=87738  peak_mem=5.255GB
+[2026-05-01 07:21:26,879] INFO: step=  600  loss=5.0258  tps=87049  peak_mem=5.255GB
+[2026-05-01 07:21:27,556] INFO:   >>> val_ppl=133.53
+[2026-05-01 07:21:42,540] INFO: step=  610  loss=5.0567  tps=87800  peak_mem=5.255GB
+[2026-05-01 07:21:57,567] INFO: step=  620  loss=5.0189  tps=87570  peak_mem=5.255GB
+[2026-05-01 07:22:12,604] INFO: step=  630  loss=5.0373  tps=86671  peak_mem=5.255GB
+[2026-05-01 07:22:27,721] INFO: step=  640  loss=4.9997  tps=86976  peak_mem=5.255GB
+[2026-05-01 07:22:42,768] INFO: step=  650  loss=5.0141  tps=86853  peak_mem=5.255GB
+[2026-05-01 07:22:57,783] INFO: step=  660  loss=5.0039  tps=87564  peak_mem=5.255GB
+[2026-05-01 07:23:12,800] INFO: step=  670  loss=5.0018  tps=87322  peak_mem=5.255GB
+[2026-05-01 07:23:27,828] INFO: step=  680  loss=4.9683  tps=87656  peak_mem=5.255GB
+[2026-05-01 07:23:42,852] INFO: step=  690  loss=5.0055  tps=86786  peak_mem=5.255GB
+[2026-05-01 07:23:57,873] INFO: step=  700  loss=4.9296  tps=87367  peak_mem=5.255GB
+[2026-05-01 07:24:12,896] INFO: step=  710  loss=4.9713  tps=87471  peak_mem=5.255GB
+[2026-05-01 07:24:27,928] INFO: step=  720  loss=4.9102  tps=87640  peak_mem=5.255GB
+[2026-05-01 07:24:42,941] INFO: step=  730  loss=4.9534  tps=86967  peak_mem=5.255GB
+[2026-05-01 07:24:57,956] INFO: step=  740  loss=4.8936  tps=87522  peak_mem=5.255GB
+[2026-05-01 07:25:12,976] INFO: step=  750  loss=4.9335  tps=87366  peak_mem=5.255GB
+[2026-05-01 07:25:27,997] INFO: step=  760  loss=4.8802  tps=87660  peak_mem=5.255GB
+[2026-05-01 07:25:43,026] INFO: step=  770  loss=4.9112  tps=87455  peak_mem=5.255GB
+[2026-05-01 07:25:58,044] INFO: step=  780  loss=4.8710  tps=87018  peak_mem=5.255GB
+[2026-05-01 07:26:13,048] INFO: step=  790  loss=4.8994  tps=87500  peak_mem=5.255GB
+[2026-05-01 07:26:28,146] INFO: step=  800  loss=4.9325  tps=86941  peak_mem=5.255GB
+[2026-05-01 07:26:28,824] INFO:   >>> val_ppl=114.61
+[2026-05-01 07:26:43,844] INFO: step=  810  loss=4.9035  tps=87538  peak_mem=5.255GB
+[2026-05-01 07:26:58,871] INFO: step=  820  loss=4.8567  tps=86647  peak_mem=5.255GB
+[2026-05-01 07:27:13,893] INFO: step=  830  loss=4.8568  tps=87560  peak_mem=5.255GB
+[2026-05-01 07:27:28,936] INFO: step=  840  loss=4.8889  tps=87403  peak_mem=5.255GB
+[2026-05-01 07:27:43,955] INFO: step=  850  loss=4.8531  tps=87678  peak_mem=5.255GB
+[2026-05-01 07:27:58,967] INFO: step=  860  loss=4.8274  tps=87501  peak_mem=5.255GB
+[2026-05-01 07:28:13,994] INFO: step=  870  loss=4.8270  tps=87375  peak_mem=5.255GB
+[2026-05-01 07:28:29,008] INFO: step=  880  loss=4.8752  tps=87567  peak_mem=5.255GB
+[2026-05-01 07:28:44,020] INFO: step=  890  loss=4.8541  tps=87554  peak_mem=5.255GB
+[2026-05-01 07:28:59,055] INFO: step=  900  loss=4.8081  tps=87478  peak_mem=5.255GB
+[2026-05-01 07:29:01,302] INFO: Final evaluation...
+[2026-05-01 07:29:01,987] INFO: FINAL: val_ppl=108.0795  peak_mem=5.255GB  throughput=87197 tok/s  time=1355s
+[2026-05-01 07:29:01,992] INFO: Results saved to logs/p1-bf16

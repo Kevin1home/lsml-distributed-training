@@ -1,0 +1,133 @@
+[rank=0] [2026-05-02 08:32:58,394] INFO: Experiment: p3-cpu-offload
+[rank=0] [2026-05-02 08:32:58,395] INFO: strategy=FULL_SHARD  dtype=bf16  cpu_offload=True  activation_checkpointing=False  world_size=2
+[rank=0] [2026-05-02 08:33:00,237] INFO: Parameters: 162.3M
+[rank=0] [2026-05-02 08:33:00,488] INFO: Loading dataset...
+[rank=0] [2026-05-02 08:33:01,180] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext.py'
+[rank=0] [2026-05-02 08:33:02,559] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/.huggingface.yaml'
+[rank=0] [2026-05-02 08:33:04,843] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/dataset_infos.json'
+[rank=0] [2026-05-02 08:33:10,375] INFO: batch_size=4  grad_accum=32  world_size=2  => 131072 tokens/step
+[rank=0] [2026-05-02 08:33:10,377] INFO: === Epoch 1/1 ===
+[rank=0] [2026-05-02 08:35:08,780] INFO: Experiment: p3-cpu-offload
+[rank=0] [2026-05-02 08:35:08,781] INFO: strategy=FULL_SHARD  dtype=bf16  cpu_offload=True  activation_checkpointing=False  world_size=2
+[rank=0] [2026-05-02 08:35:10,733] INFO: Parameters: 162.3M
+[rank=0] [2026-05-02 08:35:11,072] INFO: Loading dataset...
+[rank=0] [2026-05-02 08:35:11,761] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext.py'
+[rank=0] [2026-05-02 08:35:13,179] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/.huggingface.yaml'
+[rank=0] [2026-05-02 08:35:15,536] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/dataset_infos.json'
+[rank=0] [2026-05-02 08:35:21,050] INFO: batch_size=4  grad_accum=32  world_size=2  => 131072 tokens/step
+[rank=0] [2026-05-02 08:35:21,051] INFO: === Epoch 1/1 ===
+[rank=0] [2026-05-02 08:39:23,743] INFO: Experiment: p3-cpu-offload
+[rank=0] [2026-05-02 08:39:23,744] INFO: strategy=FULL_SHARD  dtype=bf16  cpu_offload=True  activation_checkpointing=False  world_size=2
+[rank=0] [2026-05-02 08:39:25,651] INFO: Parameters: 162.3M
+[rank=0] [2026-05-02 08:39:26,006] INFO: Loading dataset...
+[rank=0] [2026-05-02 08:39:26,699] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext.py'
+[rank=0] [2026-05-02 08:39:28,084] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/.huggingface.yaml'
+[rank=0] [2026-05-02 08:39:30,424] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/dataset_infos.json'
+[rank=0] [2026-05-02 08:39:35,956] INFO: batch_size=4  grad_accum=32  world_size=2  => 131072 tokens/step
+[rank=0] [2026-05-02 08:39:35,959] INFO: === Epoch 1/1 ===
+[rank=0] [2026-05-02 08:40:33,689] INFO: step=   10  loss=8.6966  tps=23921  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:41:29,969] INFO: step=   20  loss=7.9947  tps=23670  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:42:25,269] INFO: step=   30  loss=7.4562  tps=24126  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:43:20,353] INFO: step=   40  loss=7.1444  tps=23583  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:44:15,319] INFO: step=   50  loss=6.8723  tps=24063  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:45:09,580] INFO: step=   60  loss=6.7636  tps=24667  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:46:04,290] INFO: step=   70  loss=6.6878  tps=24323  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:46:59,240] INFO: step=   80  loss=6.5509  tps=23741  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:47:53,926] INFO: step=   90  loss=6.4879  tps=24288  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:48:48,512] INFO: step=  100  loss=6.3733  tps=23959  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:49:42,840] INFO: step=  110  loss=6.3448  tps=24270  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:50:37,418] INFO: step=  120  loss=6.2116  tps=24288  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:51:32,188] INFO: step=  130  loss=6.2177  tps=24098  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:52:26,952] INFO: step=  140  loss=6.0976  tps=24397  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:53:21,968] INFO: step=  150  loss=6.0181  tps=22063  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:54:17,793] INFO: step=  160  loss=6.0148  tps=23084  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:55:13,416] INFO: step=  170  loss=6.0053  tps=23815  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:56:09,591] INFO: step=  180  loss=5.9057  tps=22905  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:57:05,097] INFO: step=  190  loss=5.8919  tps=23134  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:58:00,151] INFO: step=  200  loss=5.8267  tps=23521  peak_mem=2.207GB
+[rank=0] [2026-05-02 08:58:01,728] INFO:   >>> val_ppl=304.26
+[rank=0] [2026-05-02 08:58:56,242] INFO: step=  210  loss=5.8756  tps=24216  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:00:00,686] INFO: step=  220  loss=5.7792  tps=11925  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:01:48,515] INFO: step=  230  loss=5.8085  tps=12005  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:03:38,030] INFO: step=  240  loss=5.7421  tps=11988  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:05:26,721] INFO: step=  250  loss=5.7267  tps=11951  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:06:42,306] INFO: step=  260  loss=5.6734  tps=23817  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:07:36,401] INFO: step=  270  loss=5.6633  tps=24279  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:08:30,766] INFO: step=  280  loss=5.6859  tps=24176  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:09:25,233] INFO: step=  290  loss=5.5620  tps=24428  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:10:19,645] INFO: step=  300  loss=5.6259  tps=24191  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:11:13,943] INFO: step=  310  loss=5.5315  tps=24303  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:12:08,441] INFO: step=  320  loss=5.6384  tps=24498  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:13:02,636] INFO: step=  330  loss=5.5684  tps=24432  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:13:56,945] INFO: step=  340  loss=5.5147  tps=24092  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:14:51,588] INFO: step=  350  loss=5.4939  tps=24238  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:15:45,906] INFO: step=  360  loss=5.4295  tps=24232  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:16:40,340] INFO: step=  370  loss=5.4512  tps=23712  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:18:17,143] INFO: step=  380  loss=5.4057  tps=9153  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:20:46,377] INFO: step=  390  loss=5.4122  tps=8836  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:23:18,000] INFO: step=  400  loss=5.3592  tps=8791  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:23:21,485] INFO:   >>> val_ppl=193.80
+[rank=0] [2026-05-02 09:25:49,747] INFO: step=  410  loss=5.3776  tps=9844  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:26:48,901] INFO: step=  420  loss=5.3469  tps=24194  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:27:43,443] INFO: step=  430  loss=5.3399  tps=24296  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:28:37,686] INFO: step=  440  loss=5.3524  tps=24377  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:29:31,923] INFO: step=  450  loss=5.2912  tps=23879  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:30:26,048] INFO: step=  460  loss=5.3351  tps=24307  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:31:20,451] INFO: step=  470  loss=5.3354  tps=24195  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:32:14,923] INFO: step=  480  loss=5.3232  tps=23946  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:33:09,298] INFO: step=  490  loss=5.2349  tps=24211  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:34:03,662] INFO: step=  500  loss=5.2607  tps=24143  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:34:57,961] INFO: step=  510  loss=5.3007  tps=24328  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:35:52,222] INFO: step=  520  loss=5.2752  tps=24074  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:36:46,678] INFO: step=  530  loss=5.2209  tps=24007  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:37:56,803] INFO: step=  540  loss=5.1957  tps=23797  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:38:51,785] INFO: step=  550  loss=5.1517  tps=24262  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:39:45,564] INFO: step=  560  loss=5.1533  tps=23890  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:40:39,325] INFO: step=  570  loss=5.1315  tps=24545  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:41:33,496] INFO: step=  580  loss=5.1286  tps=23357  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:42:28,093] INFO: step=  590  loss=5.1241  tps=24133  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:43:22,780] INFO: step=  600  loss=5.1419  tps=24076  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:43:24,375] INFO:   >>> val_ppl=148.79
+[rank=0] [2026-05-02 09:44:19,271] INFO: step=  610  loss=5.0725  tps=23904  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:45:13,786] INFO: step=  620  loss=5.1497  tps=24058  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:46:08,014] INFO: step=  630  loss=5.0859  tps=24338  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:47:02,205] INFO: step=  640  loss=5.0852  tps=24234  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:47:56,829] INFO: step=  650  loss=5.0925  tps=24233  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:48:51,496] INFO: step=  660  loss=5.0484  tps=24311  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:49:46,117] INFO: step=  670  loss=5.1268  tps=24103  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:50:40,458] INFO: step=  680  loss=5.1139  tps=24520  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:51:34,405] INFO: step=  690  loss=5.0175  tps=24291  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:52:28,526] INFO: step=  700  loss=5.0937  tps=24273  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:53:22,972] INFO: step=  710  loss=5.0646  tps=23994  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:54:17,890] INFO: step=  720  loss=5.0339  tps=24081  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:55:12,477] INFO: step=  730  loss=5.1174  tps=24423  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:56:07,016] INFO: step=  740  loss=5.0096  tps=23455  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:57:01,635] INFO: step=  750  loss=4.9871  tps=23842  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:57:56,306] INFO: step=  760  loss=4.9905  tps=24228  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:58:50,599] INFO: step=  770  loss=5.0217  tps=24148  peak_mem=2.207GB
+[rank=0] [2026-05-02 09:59:44,760] INFO: step=  780  loss=4.9539  tps=24159  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:00:39,206] INFO: step=  790  loss=5.0473  tps=24478  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:01:33,591] INFO: step=  800  loss=4.9308  tps=23835  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:01:35,165] INFO:   >>> val_ppl=125.36
+[rank=0] [2026-05-02 10:02:29,392] INFO: step=  810  loss=4.9756  tps=24314  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:03:23,458] INFO: step=  820  loss=5.0158  tps=24434  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:04:17,704] INFO: step=  830  loss=4.9149  tps=24307  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:05:11,838] INFO: step=  840  loss=4.9767  tps=24126  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:06:05,877] INFO: step=  850  loss=4.9274  tps=23932  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:06:59,915] INFO: step=  860  loss=4.9299  tps=24078  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:07:53,755] INFO: step=  870  loss=4.9474  tps=24242  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:08:48,435] INFO: step=  880  loss=4.8919  tps=23241  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:09:42,689] INFO: step=  890  loss=4.9348  tps=24012  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:10:37,008] INFO: step=  900  loss=4.9642  tps=24014  peak_mem=2.207GB
+[rank=0] [2026-05-02 10:10:44,715] INFO: Final evaluation...
+[rank=0] [2026-05-02 10:10:46,333] INFO: FINAL: val_ppl=117.3459  peak_mem=2.207GB  throughput=21599 tok/s  time=5470s
+[rank=0] [2026-05-02 10:47:36,944] INFO: Experiment: p3-cpu-offload
+[rank=0] [2026-05-02 10:47:36,945] INFO: strategy=FULL_SHARD  dtype=bf16  cpu_offload=True  activation_checkpointing=False  world_size=2
+[rank=0] [2026-05-02 10:47:38,883] INFO: Parameters: 162.3M
+[rank=0] [2026-05-02 10:47:39,911] INFO: Loading dataset...
+[rank=0] [2026-05-02 10:47:40,600] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext.py'
+[rank=0] [2026-05-02 10:47:41,966] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/.huggingface.yaml'
+[rank=0] [2026-05-02 10:47:44,458] ERROR: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 13] Permission denied: '/data/shared_ml/huggingface/hub/datasets--wikitext/.no_exist/b08601e04326c79dfdd32d625aee71d232d685c3/dataset_infos.json'
+[rank=0] [2026-05-02 10:47:50,053] INFO: batch_size=4  grad_accum=32  world_size=2  => 131072 tokens/step
+[rank=0] [2026-05-02 10:47:50,057] INFO: === Epoch 1/1 ===
+[rank=0] [2026-05-02 10:48:47,553] INFO: step=   10  loss=8.6966  tps=23629  peak_mem=2.207GB

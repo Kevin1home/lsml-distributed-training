@@ -1,0 +1,11 @@
+{
+  "experiment": "p1-fp32",
+  "dtype": "fp32",
+  "activation_checkpointing": false,
+  "val_ppl": 66.95553324110452,
+  "peak_mem_gb": 7.990518569946289,
+  "throughput_tps": 37431.70486373375,
+  "total_time_s": 3156.5010578632355,
+  "total_steps": 901,
+  "tokens_seen": 118153216
+}

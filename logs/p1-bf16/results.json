@@ -1,0 +1,11 @@
+{
+  "experiment": "p1-bf16",
+  "dtype": "bf16",
+  "activation_checkpointing": false,
+  "val_ppl": 108.07949916446026,
+  "peak_mem_gb": 5.254854202270508,
+  "throughput_tps": 87197.17975349003,
+  "total_time_s": 1355.0118975639343,
+  "total_steps": 901,
+  "tokens_seen": 118153216
+}

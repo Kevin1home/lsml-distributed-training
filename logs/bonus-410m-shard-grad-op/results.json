@@ -1,0 +1,15 @@
+{
+  "experiment": "bonus-410m-shard-grad-op",
+  "model": "EleutherAI/pythia-410m",
+  "strategy": "SHARD_GRAD_OP",
+  "dtype": "bf16",
+  "cpu_offload": false,
+  "activation_checkpointing": false,
+  "world_size": 4,
+  "val_ppl": 85.88458501412872,
+  "peak_mem_gpu_gb": 3.1044325828552246,
+  "throughput_tps": 25234.37798699868,
+  "throughput_per_gpu_tps": 6308.59449674967,
+  "total_time_s": 4682.313313245773,
+  "total_steps": 901
+}

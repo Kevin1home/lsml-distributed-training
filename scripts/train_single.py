@@ -24,7 +24,6 @@ import argparse
 import json
 import logging
 import math
-import os
 import time
 from pathlib import Path
 
@@ -272,7 +271,8 @@ def main():
     import csv
     with open(exp_dir / 'training_log.csv', 'w', newline='') as f:
         if log_rows:
-            writer = csv.DictWriter(f, fieldnames=log_rows[0].keys())
+            fieldnames = ["step", "train_loss", "tps", "peak_mem_gb", "val_ppl"]
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", restval="")
             writer.writeheader()
             writer.writerows(log_rows)
 

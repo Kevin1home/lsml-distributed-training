@@ -167,17 +167,12 @@ def wrap_model(model, strategy: str, cpu_offload: bool, device, rank: int, world
         return model
 
     # FSDP2 API
-    from torch.distributed._composable.fsdp import fully_shard, CPUOffloadPolicy, MixedPrecisionPolicy
-    from torch.distributed._composable.fsdp._fsdp_api import OffloadPolicy
+    from torch.distributed._composable.fsdp import fully_shard, CPUOffloadPolicy
 
-    # Apply per-transformer-block sharding for better memory efficiency
-    # Walk through transformer layers and shard each block individually
-    _shard_transformer_blocks(model, strategy, cpu_offload, device)
-
-    # Shard the top-level model
     reshard_after_forward = (strategy == 'FULL_SHARD')
-
     offload_policy = CPUOffloadPolicy() if cpu_offload else None
+
+    _shard_transformer_blocks(model, strategy, cpu_offload, device)
 
     fully_shard(
         model,
@@ -363,7 +358,8 @@ def main():
             tokens_seen += batch['input_ids'].numel() * world_size
 
             if is_last_accum:
-                torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
+                if not args.cpu_offload:
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
                 optimizer.step()
                 optimizer.zero_grad()
 

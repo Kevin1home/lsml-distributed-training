@@ -1,0 +1,15 @@
+{
+  "experiment": "p3-full-shard",
+  "model": "EleutherAI/pythia-160m",
+  "strategy": "FULL_SHARD",
+  "dtype": "bf16",
+  "cpu_offload": false,
+  "activation_checkpointing": false,
+  "world_size": 2,
+  "val_ppl": 108.14244230321128,
+  "peak_mem_gpu_gb": 2.8173956871032715,
+  "throughput_tps": 44762.52102789995,
+  "throughput_per_gpu_tps": 22381.260513949976,
+  "total_time_s": 2639.6025354862213,
+  "total_steps": 901
+}
